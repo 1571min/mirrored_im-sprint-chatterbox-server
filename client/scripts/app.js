@@ -1,16 +1,16 @@
 // YOUR CODE HERE:
 
 const app = {
-  server: 'http://127.0.0.1:3000/message',
+  server: 'http://127.0.0.1:3000/classes/messages',
   init: () => {
     app.addEventHandlers();
-    app.fetch(json => {
-      json.forEach(app.renderMessage);
+    app.fetch((json) => {
+      json.results.forEach(app.renderMessage);
     });
   },
   fetchAndRender: () => {
-    app.fetch(data => {
-      data.forEach(app.renderMessage);
+    app.fetch((data) => {
+      data.results.forEach(app.renderMessage);
     });
   },
   addEventHandlers: () => {
@@ -19,10 +19,10 @@ const app = {
       submit.addEventListener('submit', app.handleSubmit);
     }
   },
-  fetch: callback => {
+  fetch: (callback) => {
     window
       .fetch(app.server)
-      .then(resp => {
+      .then((resp) => {
         return resp.json();
       })
       .then(callback);
@@ -33,10 +33,10 @@ const app = {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       })
-      .then(resp => {
+      .then((resp) => {
         return resp.json();
       })
       .then(callback);
@@ -71,21 +71,21 @@ const app = {
     document.querySelector('#chats').innerHTML =
       tmpl + document.querySelector('#chats').innerHTML;
   },
-  handleSubmit: e => {
+  handleSubmit: (e) => {
     e.preventDefault();
     app.clearMessages();
     app.send(
       {
         username: document.querySelector('.inputUser').value,
         text: document.querySelector('.inputChat').value,
-        roomname: '코드스테이츠'
+        roomname: '코드스테이츠',
       },
       () => {
         app.fetchAndRender();
         app.clearForm();
       }
     );
-  }
+  },
 };
 
 app.init();
