@@ -118,7 +118,6 @@ const requestHandler = function (request, response) {
       body = Buffer.concat(body).toString();
       chats.results.push(JSON.parse(body));
       response.writeHead(201, headers);
-      console.log(chats);
       response.end(JSON.stringify(chats));
     });
   }
