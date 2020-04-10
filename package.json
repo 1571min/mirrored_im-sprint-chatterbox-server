@@ -8,7 +8,7 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "start": "nodemon express/basic-server.js",
+    "start": "nodemon server/basic-server.js",
     "test": "jest",
     "submit": "node .travis/submit.js"
   },
