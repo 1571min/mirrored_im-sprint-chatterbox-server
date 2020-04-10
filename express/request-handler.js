@@ -9,63 +9,8 @@ requestHandler 함수를 export 하여 basic-server.js 에서 사용 할 수 있
 **************************************************************/
 let chats = {
   results: [
-    // {
-    //   id: 0,
-    //   username: 'Go',
-    //   text: '555',
-    //   roomname: '로비',
-    //   date: '2020-04-08T03:07:23.167Z',
-    // },
-    // {
-    //   id: 1,
-    //   username: 'Go',
-    //   text: 'reset',
-    //   roomname: '코드스테이츠',
-    //   date: '2020-04-08T03:07:36.231Z',
-    // },
-    // {
-    //   id: 2,
-    //   username: 'Go',
-    //   text: 'Mini Node Server 스프린트는 어디서 fork하나요? 왜 안보이지',
-    //   roomname: '코드스테이츠',
-    //   date: '2020-04-08T03:08:25.785Z',
-    // },
-    // {
-    //   id: 3,
-    //   username: 'ㅇㅇ',
-    //   text: 'ㅇㅇㅇ',
-    //   roomname: 'none',
-    //   date: '2020-04-08T03:20:21.143Z',
-    // },
-    // {
-    //   id: 4,
-    //   username: 'LogIn',
-    //   text: 'sfda',
-    //   roomname: '...usb',
-    //   date: '2020-04-08T04:07:04.955Z',
-    // },
-    // {
-    //   id: 5,
-    //   username: 'ㅎㅎ',
-    //   text: '졸립다',
-    //   roomname: '내방',
-    //   date: '2020-04-08T04:07:42.442Z',
-    // },
-    // {
-    //   id: 6,
-    //   username: 'LogIn',
-    //   text: 'new',
-    //   roomname: '...usb',
-    //   date: '2020-04-08T04:11:21.052Z',
-    // },
-    // {
-    //   id: 7,
-    //   username: 'LogIn',
-    //   text: '잘자라우리아기',
-    //   roomname: '...usb',
-    //   date: '2020-04-08T04:13:16.678Z',
-    // },
-  ],
+    
+  ]
 };
 
 const requestHandler = function (request, response) {
