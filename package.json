@@ -8,7 +8,7 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "start": "nodemon server/basic-server.js",
+    "start": "nodemon --inspect-brk server/basic-server.js",
     "test": "jest",
     "submit": "node .travis/submit.js"
   },
@@ -25,6 +25,7 @@
     }
   },
   "dependencies": {
+    "express": "^4.17.1",
     "nodemon": "^2.0.3"
   }
 }
