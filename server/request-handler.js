@@ -7,65 +7,37 @@ reuqestHandler 함수는 이미 basic-server.js 파일에서 사용 했지만, �
 requestHandler 함수를 export 하여 basic-server.js 에서 사용 할 수 있게 하세요
 
 **************************************************************/
+const url = require('url');
+const fs = require('fs');
 let chats = {
-  results: [
-    // {
-    //   id: 0,
-    //   username: 'Go',
-    //   text: '555',
-    //   roomname: '로비',
-    //   date: '2020-04-08T03:07:23.167Z',
-    // },
-    // {
-    //   id: 1,
-    //   username: 'Go',
-    //   text: 'reset',
-    //   roomname: '코드스테이츠',
-    //   date: '2020-04-08T03:07:36.231Z',
-    // },
-    // {
-    //   id: 2,
-    //   username: 'Go',
-    //   text: 'Mini Node Server 스프린트는 어디서 fork하나요? 왜 안보이지',
-    //   roomname: '코드스테이츠',
-    //   date: '2020-04-08T03:08:25.785Z',
-    // },
-    // {
-    //   id: 3,
-    //   username: 'ㅇㅇ',
-    //   text: 'ㅇㅇㅇ',
-    //   roomname: 'none',
-    //   date: '2020-04-08T03:20:21.143Z',
-    // },
-    // {
-    //   id: 4,
-    //   username: 'LogIn',
-    //   text: 'sfda',
-    //   roomname: '...usb',
-    //   date: '2020-04-08T04:07:04.955Z',
-    // },
-    // {
-    //   id: 5,
-    //   username: 'ㅎㅎ',
-    //   text: '졸립다',
-    //   roomname: '내방',
-    //   date: '2020-04-08T04:07:42.442Z',
-    // },
-    // {
-    //   id: 6,
-    //   username: 'LogIn',
-    //   text: 'new',
-    //   roomname: '...usb',
-    //   date: '2020-04-08T04:11:21.052Z',
-    // },
-    // {
-    //   id: 7,
-    //   username: 'LogIn',
-    //   text: '잘자라우리아기',
-    //   roomname: '...usb',
-    //   date: '2020-04-08T04:13:16.678Z',
-    // },
-  ],
+  results: [],
+};
+
+let database = {
+  writeFile: (chats) => {
+    fs.open('./chatdata.json', 'w', (err, fd) => {
+      if (err) throw err;
+      let chatsBuf = new Buffer(JSON.stringify(chats.results));
+      fs.write(
+        fd,
+        chatsBuf,
+        0,
+        chatsBuf.length,
+        null,
+        (err, written, buffer) => {
+          if (err) throw err;
+          fs.close(fd, () => {
+            console.log('파일 열고 읽고 쓰기 완료');
+          });
+        }
+      );
+    });
+  },
+  readFile: (cb) => {
+    fs.readFile('./chatdata.json', 'utf-8', (err, data) => {
+      cb(data);
+    });
+  },
 };
 
 const requestHandler = function (request, response) {
@@ -97,31 +69,47 @@ const requestHandler = function (request, response) {
   //response.writeHead(statusCode, headers);
 
   // 노드 서버에 대한 모든 요청은 응답이 있어야 합니다. response.end 메소드는 요청에 대한 응답을 보내줍니다.
+  let queryData = url.parse(request.url, true).query;
+  let messageReg = new RegExp('/message?[^s$.?#].[^s]*$');
 
   if (request.method === 'OPTIONS') {
     response.writeHead(statusCode, headers);
     response.end();
   } else if (request.method === 'GET') {
-    if (request.url !== '/classes/messages') {
-      response.writeHead(404, headers);
-      response.end(chats.toString());
-    } else {
-      response.writeHead(statusCode, headers);
-      response.end(JSON.stringify(chats));
-    }
-  } else if (request.method === 'POST') {
-    let body = [];
-    request.on('data', (chunk) => {
-      body.push(chunk);
+    database.readFile((fileData) => {
+      chats.results = JSON.parse(fileData);
+      if (request.url.match(messageReg)) {
+        response.writeHead(statusCode, headers);
+        if (queryData.id) {
+          response.write(JSON.stringify(chats.results[queryData.id]));
+        } else {
+          response.write(JSON.stringify(chats));
+        }
+      } else {
+        response.writeHead(404, headers);
+      }
+      response.end();
     });
-    request.on('end', () => {
-      body = Buffer.concat(body).toString();
-      chats.results.push(JSON.parse(body));
-      response.writeHead(201, headers);
-      response.end(JSON.stringify(chats));
+  } else if (request.method === 'POST') {
+    database.readFile((fileData) => {
+      let body = [];
+      request.on('data', (chunk) => {
+        body.push(chunk);
+      });
+      request.on('end', () => {
+        chats.results = JSON.parse(fileData);
+        body = Buffer.concat(body).toString();
+        let chat = JSON.parse(body);
+        chat['id'] = chats.results.length;
+        chat['date'] = new Date();
+        chats.results.push(JSON.parse(body));
+        response.writeHead(201, headers);
+        response.end(JSON.stringify(chats));
+        database.writeFile(chats);
+      });
     });
   }
-  // response.end('Hello, World!');
+  // response.end();
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
